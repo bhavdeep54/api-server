@@ -14,7 +14,7 @@ This is a full-stack CRUD application built using **Node.js**, **Express.js**, *
 
 ---
 
-## 🏗️ Project Structure
+## 📁 Project Structure
 
 ├── index.js # Main server file
 ├── .env # Environment variables (NOT committed)
@@ -73,30 +73,90 @@ Edit
 nodemon index.js
 # or
 node index.js
-Visit http://localhost:3000 in your browser.
+Visit: http://localhost:3000
 
-🔌 API Endpoints
-Method	Endpoint	Description
-GET	/	List all users
-POST	/users	Add a new user
-DELETE	/users/:id	Delete a user
-PUT	/users/:id	Update a user
+✨ API Endpoints
+1. 🔍 Get All Users
+URL: /
 
-All interactions handled via EJS forms on the frontend.
+Method: GET
 
+Description: Fetch all users from the database.
+
+Sample Response:
+
+json
+Copy
+Edit
+[
+  {
+    "id": 1,
+    "name": "Alice",
+    "email": "alice@example.com"
+  }
+]
+2. ➕ Add a New User
+URL: /users
+
+Method: POST
+
+Description: Add a new user.
+
+Request Body:
+
+json
+Copy
+Edit
+{
+  "name": "Charlie",
+  "email": "charlie@example.com"
+}
+Sample Response:
+
+json
+Copy
+Edit
+{
+  "message": "User added successfully"
+}
+3. 🗑️ Delete a User
+URL: /users/:id?_method=DELETE
+
+Method: POST with method override
+
+Description: Delete a user by ID.
+
+Example: /users/3?_method=DELETE
+
+4. ✏️ Update a User
+URL: /users/:id?_method=PUT
+
+Method: POST with method override
+
+Description: Update user by ID.
+
+Request Body:
+
+json
+Copy
+Edit
+{
+  "name": "Updated Charlie",
+  "email": "newcharlie@example.com"
+}
 🛡️ Security
-Credentials and sensitive configs are stored in .env
+.env file used to store sensitive credentials.
 
-.gitignore ensures .env and node_modules are never pushed
+.gitignore ensures secrets are never exposed.
 
 💡 Future Enhancements
-Add search & sort features
+Add search/sort filters
 
-Add input validation and error handling
+Add input validations
 
-Use Sequelize/Prisma ORM
+Use Sequelize or Prisma for ORM
 
-Deploy on Render or Railway
+Deploy using Render or Railway
 
-👨‍💻 Author
+🧑‍💻 Author
 Made with 💻 by Bhavdeep Singh

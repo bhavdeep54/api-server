@@ -1,33 +1,53 @@
-API Server with Node.js, Express, and MySQL
-This is a full-stack CRUD application built with Node.js, Express.js, MySQL, and EJS. It provides a simple and responsive interface to manage users in a MySQL database, featuring create, read, update, and delete operations. Flash messages offer real-time feedback, and Bootstrap ensures a clean, modern UI.
-Features
+# 📦 Custom API Server with MySQL and Express.js
 
-Create, view, update, and delete users
-Responsive frontend with EJS and Bootstrap
-Flash messages for success and error notifications
-Secure configuration using environment variables
-Modular structure for easy scalability
+This project is a basic CRUD web application using **Node.js**, **Express.js**, **MySQL**, and **EJS** for the frontend. It includes full Create, Read, Update, and Delete operations, flash message notifications, Bootstrap styling, and uses environment variables for secure database connection.
 
-Project Structure
+---
+
+## 🔧 Features
+
+* ✅ Add, update, delete, and list users
+* ✅ EJS frontend styled with Bootstrap
+* ✅ Flash messages for user feedback
+* ✅ Password & DB config secured with `.env`
+* ✅ Clean project structure
+
+---
+
+## 📁 Project Structure
+
+```
 ├── index.js              # Main server file
-├── .env                  # Environment variables (not in Git)
-├── .gitignore            # Excludes node_modules and .env
-├── views/                # EJS templates
-│   └── index.ejs         # Main user interface
-├── public/               # Static files (optional)
-├── package.json          # Dependencies and scripts
+├── .env                 # Environment variables (NOT committed)
+├── .gitignore           # node_modules and .env excluded
+├── views/
+│   └── index.ejs        # Frontend template
+├── public/              # (Optional) static assets (e.g., CSS, JS)
+├── package.json         # Project dependencies
+```
 
-Getting Started
-Follow these steps to set up and run the application locally.
-1. Clone the Repository
-git clone https://github.com/your-username/api-server.git
-cd api-server
+---
 
-2. Install Dependencies
+## 🚀 How to Run Locally
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/your-username/custom-api-server.git
+cd custom-api-server
+```
+
+### 2. Install dependencies
+
+```bash
 npm install
+```
 
-3. Configure MySQL
-Create a database and a users table:
+### 3. Set up MySQL database
+
+Create a database and a `users` table:
+
+```sql
 CREATE DATABASE your_database_name;
 
 USE your_database_name;
@@ -37,83 +57,66 @@ CREATE TABLE users (
   name VARCHAR(255),
   email VARCHAR(255)
 );
+```
 
-4. Set Up Environment Variables
-Create a .env file in the project root with the following:
+### 4. Configure `.env`
+
+Create a `.env` file in the root:
+
+```
 DB_HOST=localhost
 DB_USER=root
-DB_PASS=your_mysql_password
+DB_PASS=your_password
 DB_NAME=your_database_name
+```
 
-5. Run the Application
+### 5. Start the server
+
+```bash
 nodemon index.js
 # or
 node index.js
+```
 
-Visit http://localhost:3000 in your browser.
-API Endpoints
-1. Get All Users
+Visit: `http://localhost:3000`
 
-URL: /
-Method: GET
-Description: Retrieves all users from the database.
-Sample Response:[
-  {
-    "id": 1,
-    "name": "Alice",
-    "email": "alice@example.com"
-  }
-]
+---
 
+## ✨ API Endpoints
 
+| Method | Endpoint     | Description    |
+| ------ | ------------ | -------------- |
+| GET    | `/`          | List all users |
+| POST   | `/users`     | Add a new user |
+| DELETE | `/users/:id` | Delete a user  |
+| PUT    | `/users/:id` | Update a user  |
 
-2. Add a New User
+All requests handled with form submissions in EJS frontend.
 
-URL: /users
-Method: POST
-Description: Adds a new user to the database.
-Request Body:{
-  "name": "Charlie",
-  "email": "charlie@example.com"
-}
+---
 
+## 🛡️ Environment & Security
 
-Sample Response:{
-  "message": "User added successfully"
-}
+* Environment secrets stored in `.env`
+* `.env` is included in `.gitignore`
 
+---
 
+## 💡 Optional Improvements
 
-3. Delete a User
+* Add search/sort for users
+* Add validations
+* Use Sequelize or Prisma ORM
+* Deploy on Render, Railway, or Vercel
 
-URL: /users/:id?_method=DELETE
-Method: POST (with method override)
-Description: Deletes a user by their ID.
-Example: /users/3?_method=DELETE
+---
 
-4. Update a User
+## 🧑‍💻 Author
 
-URL: /users/:id?_method=PUT
-Method: POST (with method override)
-Description: Updates a user’s details by their ID.
-Request Body:{
-  "name": "Updated Charlie",
-  "email": "newcharlie@example.com"
-}
+Made by Bhavdeep Singh
 
+---
 
+## 📜 License
 
-Security
-
-Sensitive credentials are stored in a .env file.
-The .gitignore file ensures that secrets and node_modules are not committed.
-
-Future Enhancements
-
-Implement search and sort functionality
-Add input validation for user data
-Integrate an ORM like Sequelize or Prisma
-Deploy the application on platforms like Render or Railway
-
-Author
-Developed by Bhavdeep Singh
+MIT License

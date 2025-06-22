@@ -37,15 +37,16 @@ const db = mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASS,
-  database: process.env.DB_NAME
+  database: process.env.DB_NAME,
+  charset: 'utf8mb4' // ✅ Fixes cesu8 encoding issue
 });
 
 db.connect((err) => {
   if (err) {
     console.error('❌ MySQL connection error:', err);
-    return;
+  } else {
+    console.log('✅ Connected to MySQL');
   }
-  console.log('✅ Connected to MySQL');
 });
 
 // Home - List users
@@ -97,7 +98,12 @@ app.put('/users/:id', (req, res) => {
   });
 });
 
-// Start server
-app.listen(3000, () => {
-  console.log('🚀 Server running at http://localhost:3000');
-});
+// ✅ Only start server if this file is run directly (not imported in tests)
+if (require.main === module) {
+  app.listen(3000, () => {
+    console.log('🚀 Server running at http://localhost:3000');
+  });
+}
+
+// ✅ Export app for Supertest (API tests)
+module.exports = app;

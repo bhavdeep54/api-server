@@ -1,7 +1,7 @@
 const request = require('supertest');
 const app = require('../../index'); // Your main Express app
 
-describe('🌐 API Test: /users endpoints', () => {
+describe('API Test: /users endpoints', () => {
   it('GET / should return homepage HTML', async () => {
     const res = await request(app).get('/');
     expect(res.statusCode).toBe(200);

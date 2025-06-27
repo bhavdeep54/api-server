@@ -6,6 +6,8 @@ const flash = require('connect-flash');
 const methodOverride = require('method-override');
 require('dotenv').config();
 
+const swaggerDocs = require('./swagger'); 
+
 const app = express();
 
 // Middleware
@@ -21,24 +23,24 @@ app.use(session({
 }));
 app.use(flash());
 
-// Set global vars
+// Global variables for EJS
 app.use((req, res, next) => {
   res.locals.success = req.flash('success');
   res.locals.error = req.flash('error');
   next();
 });
 
-// Set view engine
+// View Engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Database
+// MySQL DB Connection
 const db = mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
-  charset: 'utf8mb4' // ✅ Fixes cesu8 encoding issue
+  charset: 'utf8mb4'
 });
 
 db.connect((err) => {
@@ -49,7 +51,33 @@ db.connect((err) => {
   }
 });
 
-// Home - List users
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     User:
+ *       type: object
+ *       required:
+ *         - name
+ *         - email
+ *       properties:
+ *         id:
+ *           type: integer
+ *         name:
+ *           type: string
+ *         email:
+ *           type: string
+ */
+
+/**
+ * @swagger
+ * /:
+ *   get:
+ *     summary: Get all users
+ *     responses:
+ *       200:
+ *         description: List of users
+ */
 app.get('/', (req, res) => {
   db.query('SELECT * FROM users', (err, results) => {
     if (err) {
@@ -60,7 +88,21 @@ app.get('/', (req, res) => {
   });
 });
 
-// Add user
+/**
+ * @swagger
+ * /users:
+ *   post:
+ *     summary: Add a new user
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/x-www-form-urlencoded:
+ *           schema:
+ *             $ref: '#/components/schemas/User'
+ *     responses:
+ *       201:
+ *         description: User created
+ */
 app.post('/users', (req, res) => {
   const { name, email } = req.body;
   db.query('INSERT INTO users (name, email) VALUES (?, ?)', [name, email], (err) => {
@@ -73,7 +115,21 @@ app.post('/users', (req, res) => {
   });
 });
 
-// Delete user
+/**
+ * @swagger
+ * /users/{id}:
+ *   delete:
+ *     summary: Delete a user
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: User deleted
+ */
 app.delete('/users/:id', (req, res) => {
   db.query('DELETE FROM users WHERE id = ?', [req.params.id], (err) => {
     if (err) {
@@ -85,7 +141,27 @@ app.delete('/users/:id', (req, res) => {
   });
 });
 
-// Update user
+/**
+ * @swagger
+ * /users/{id}:
+ *   put:
+ *     summary: Update a user
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/x-www-form-urlencoded:
+ *           schema:
+ *             $ref: '#/components/schemas/User'
+ *     responses:
+ *       200:
+ *         description: User updated
+ */
 app.put('/users/:id', (req, res) => {
   const { name, email } = req.body;
   db.query('UPDATE users SET name = ?, email = ? WHERE id = ?', [name, email, req.params.id], (err) => {
@@ -98,12 +174,14 @@ app.put('/users/:id', (req, res) => {
   });
 });
 
-// ✅ Only start server if this file is run directly (not imported in tests)
+// Load Swagger UI
+swaggerDocs(app); 
+
+// Only run server if not in test mode
 if (require.main === module) {
   app.listen(3000, () => {
     console.log('🚀 Server running at http://localhost:3000');
   });
 }
 
-// ✅ Export app for Supertest (API tests)
-module.exports = app;
+module.exports = app; // For testing

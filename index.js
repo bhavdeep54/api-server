@@ -6,7 +6,9 @@ const flash = require('connect-flash');
 const methodOverride = require('method-override');
 require('dotenv').config();
 
-const swaggerDocs = require('./swagger'); 
+// Swagger
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./swagger');
 
 const app = express();
 
@@ -23,7 +25,7 @@ app.use(session({
 }));
 app.use(flash());
 
-// Global variables for EJS
+// Global vars
 app.use((req, res, next) => {
   res.locals.success = req.flash('success');
   res.locals.error = req.flash('error');
@@ -81,6 +83,7 @@ db.connect((err) => {
 app.get('/', (req, res) => {
   db.query('SELECT * FROM users', (err, results) => {
     if (err) {
+      console.error('❌ Query Error:', err);
       req.flash('error', 'Failed to load users');
       return res.render('index', { users: [] });
     }
@@ -105,8 +108,13 @@ app.get('/', (req, res) => {
  */
 app.post('/users', (req, res) => {
   const { name, email } = req.body;
+  if (!name || !email) {
+    req.flash('error', 'Name and email are required');
+    return res.redirect('/');
+  }
   db.query('INSERT INTO users (name, email) VALUES (?, ?)', [name, email], (err) => {
     if (err) {
+      console.error('❌ Insert Error:', err);
       req.flash('error', 'Error adding user');
     } else {
       req.flash('success', 'User added successfully');
@@ -133,6 +141,7 @@ app.post('/users', (req, res) => {
 app.delete('/users/:id', (req, res) => {
   db.query('DELETE FROM users WHERE id = ?', [req.params.id], (err) => {
     if (err) {
+      console.error('❌ Delete Error:', err);
       req.flash('error', 'Error deleting user');
     } else {
       req.flash('success', 'User deleted successfully');
@@ -166,6 +175,7 @@ app.put('/users/:id', (req, res) => {
   const { name, email } = req.body;
   db.query('UPDATE users SET name = ?, email = ? WHERE id = ?', [name, email, req.params.id], (err) => {
     if (err) {
+      console.error('❌ Update Error:', err);
       req.flash('error', 'Error updating user');
     } else {
       req.flash('success', 'User updated successfully');
@@ -174,14 +184,20 @@ app.put('/users/:id', (req, res) => {
   });
 });
 
-// Load Swagger UI
-swaggerDocs(app); 
+// Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// Only run server if not in test mode
+// Raw OpenAPI JSON
+app.get('/api-docs.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerSpec);
+});
+
+// Start server
 if (require.main === module) {
   app.listen(3000, () => {
     console.log('🚀 Server running at http://localhost:3000');
   });
 }
 
-module.exports = app; // For testing
+module.exports = app;

@@ -1,7 +1,5 @@
 const swaggerJSDoc = require('swagger-jsdoc');
-const swaggerUi = require('swagger-ui-express');
 
-// Swagger config
 const options = {
   definition: {
     openapi: '3.0.0',
@@ -16,14 +14,9 @@ const options = {
       },
     ],
   },
-  apis: ['./index.js'], // Path to your API docs
+  apis: ['./index.js'],
 };
 
 const swaggerSpec = swaggerJSDoc(options);
 
-function swaggerDocs(app) {
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-  console.log('📄 Swagger docs available at http://localhost:3000/api-docs');
-}
-
-module.exports = swaggerDocs;
+module.exports = swaggerSpec;

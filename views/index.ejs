@@ -10,19 +10,20 @@
 
     <% if (success && success.length > 0) { %>
       <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <%= success %>
+        <strong>✅</strong> <%= success %>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
       </div>
     <% } %>
 
     <% if (error && error.length > 0) { %>
       <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <%= error %>
+        <strong>❌</strong> <%= error %>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
       </div>
     <% } %>
 
-    <form action="/users" method="POST" class="mb-4">
+    <form action="/users" method="POST" class="mb-4 border rounded p-3 bg-light">
+      <h5 class="mb-3">Add New User</h5>
       <div class="mb-3">
         <input type="text" name="name" placeholder="Name" class="form-control" required>
       </div>
@@ -32,28 +33,41 @@
       <button class="btn btn-primary">Add User</button>
     </form>
 
-    <table class="table table-bordered">
-      <thead>
-        <tr><th>ID</th><th>Name</th><th>Email</th><th>Actions</th></tr>
+    <table class="table table-bordered table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Actions</th>
+        </tr>
       </thead>
       <tbody>
-        <% users.forEach(user => { %>
+        <% if (users.length === 0) { %>
           <tr>
-            <td><%= user.id %></td>
-            <td><%= user.name %></td>
-            <td><%= user.email %></td>
-            <td>
-              <form action="/users/<%= user.id %>?_method=DELETE" method="POST" style="display:inline-block;">
-                <button class="btn btn-danger btn-sm">Delete</button>
-              </form>
-              <form action="/users/<%= user.id %>?_method=PUT" method="POST" style="display:inline-block;">
-                <input type="text" name="name" placeholder="New name" class="form-control mb-1" required>
-                <input type="email" name="email" placeholder="New email" class="form-control mb-1" required>
-                <button class="btn btn-warning btn-sm">Update</button>
-              </form>
-            </td>
+            <td colspan="4" class="text-center text-muted">No users found.</td>
           </tr>
-        <% }) %>
+        <% } else { %>
+          <% users.forEach(user => { %>
+            <tr>
+              <td><%= user.id %></td>
+              <td><%= user.name %></td>
+              <td><%= user.email %></td>
+              <td>
+                <form action="/users/<%= user.id %>?_method=DELETE" method="POST" style="display:inline-block;" onsubmit="return confirm('Delete this user?');">
+                  <button class="btn btn-danger btn-sm">Delete</button>
+                </form>
+                <form action="/users/<%= user.id %>?_method=PUT" method="POST" class="d-inline-block mt-2">
+                  <div class="input-group">
+                    <input type="text" name="name" placeholder="New name" class="form-control" required>
+                    <input type="email" name="email" placeholder="New email" class="form-control" required>
+                    <button class="btn btn-warning btn-sm">Update</button>
+                  </div>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        <% } %>
       </tbody>
     </table>
   </div>
